@@ -1,0 +1,9 @@
+baseURL = 'https://example.org/'
+languageCode = 'ko-kr'
+title = '행정력? 지금은 실행력! 기호4번 개혁신당 구의원 후보 정민우'
+theme = "PaperMod"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
