@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>천호동 재건축 시뮬레이터</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A0F1E;--navy3:#141C2E;--navy4:#1E2D4A;
+  --gold:#C9A84C;--gold2:#E8C97A;--gold3:rgba(201,168,76,0.12);
+  --text:#F0E8D4;--text2:#8A9BBE;--text3:#4A6080;
+  --green:#4ADE80;--red:#F87171;
+  --blue:#60A5FA;--blue2:#93C5FD;
+  --fix:#4ADE80;--ext:#F87171;--var:#FBB040;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--navy4);padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.nav-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--gold),var(--gold2));clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--navy);font-weight:800;}
+.nav-brand{font-family:'Noto Serif KR',serif;color:var(--gold);font-size:15px;font-weight:700;}
+.nav-links{display:flex;gap:16px;}
+.nav-link{color:var(--text2);font-size:12px;text-decoration:none;}
+.nav-link.on{color:var(--gold);}
+.hdr{background:linear-gradient(180deg,#0D1525,var(--navy));border-bottom:1px solid var(--navy4);padding:26px 20px 18px;text-align:center;position:relative;}
+.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--blue),var(--blue2),var(--blue),transparent);}
+.hdr-tag{color:var(--blue);font-size:10px;letter-spacing:.25em;margin-bottom:7px;}
+.hdr h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;margin-bottom:4px;}
+.hdr p{color:var(--text2);font-size:12px;}
+.legend{display:flex;justify-content:center;gap:16px;margin-top:12px;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.tabs{display:flex;justify-content:center;gap:8px;margin-top:14px;}
+.tab{background:transparent;color:var(--text2);border:1px solid var(--navy4);border-radius:24px;padding:6px 14px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Noto Sans KR',sans-serif;}
+.tab.on{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#0A1628;border-color:var(--blue);font-weight:700;}
+.tab-n{width:17px;height:17px;border-radius:50%;background:var(--navy4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.tab.on .tab-n{background:rgba(0,0,0,.2);}
+.page{max-width:680px;margin:0 auto;padding:20px 14px 60px;}
+
+/* 구역 */
+.zone{border-radius:14px;padding:20px 18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.zone::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;}
+.z-fix{background:#071408;border:1px solid rgba(74,222,128,.2);}
+.z-fix::before{background:linear-gradient(180deg,var(--fix),#22C55E);}
+.z-ext{background:#140808;border:1px solid rgba(248,113,113,.2);}
+.z-ext::before{background:linear-gradient(180deg,var(--ext),#EF4444);}
+.z-var{background:#140F00;border:1px solid rgba(251,176,64,.2);}
+.z-var::before{background:linear-gradient(180deg,var(--var),#F59E0B);}
+.zone-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.zone-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.z-fix .zone-icon{background:rgba(74,222,128,.12);}
+.z-ext .zone-icon{background:rgba(248,113,113,.12);}
+.z-var .zone-icon{background:rgba(251,176,64,.12);}
+.zone-title{font-size:14px;font-weight:700;}
+.z-fix .zone-title{color:var(--fix);}
+.z-ext .zone-title{color:var(--ext);}
+.z-var .zone-title{color:var(--var);}
+.zone-desc{color:var(--text2);font-size:11px;margin-top:2px;}
+
+.card{background:var(--navy3);border:1px solid var(--navy4);border-radius:14px;padding:20px 18px;margin-bottom:14px;}
+.ch{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.cb{width:4px;height:20px;background:linear-gradient(180deg,var(--blue),var(--blue2));border-radius:2px;flex-shrink:0;}
+.ch h2{color:var(--text);font-size:14px;font-weight:700;}
+.bdg{font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid;}
+.bdg-b{background:rgba(96,165,250,.1);color:var(--blue);border-color:rgba(96,165,250,.2);}
+.bdg-g{background:var(--gold3);color:var(--gold);border-color:var(--navy4);}
+.bdg-fix{background:rgba(74,222,128,.1);color:var(--fix);border-color:rgba(74,222,128,.2);}
+.bdg-ext{background:rgba(248,113,113,.1);color:var(--ext);border-color:rgba(248,113,113,.2);}
+.bdg-var{background:rgba(251,176,64,.1);color:var(--var);border-color:rgba(251,176,64,.2);}
+
+.big-inp{background:#0D1525;border:1px solid var(--blue);border-radius:10px;padding:10px 16px;color:var(--blue);font-size:24px;font-weight:800;width:140px;text-align:right;outline:none;font-family:'Noto Sans KR',sans-serif;}
+input[type=range]{width:100%;cursor:pointer;margin:4px 0;}
+.sf-fix input[type=range]{accent-color:var(--fix);}
+.sf-ext input[type=range]{accent-color:var(--ext);}
+.sf-var input[type=range]{accent-color:var(--var);}
+.sw{margin-bottom:14px;}
+.sr2{display:flex;justify-content:space-between;margin-bottom:4px;}
+.sl{color:var(--text2);font-size:12px;}
+.sv{font-weight:700;font-size:13px;}
+.sh{color:var(--text3);font-size:10px;margin-top:2px;}
+.dot{font-size:9px;margin-left:3px;}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
+.mc{border-radius:9px;padding:10px 12px;}
+.mc-fix{background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);}
+.mc-ext{background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.15);}
+.mc-var{background:rgba(251,176,64,.05);border:1px solid rgba(251,176,64,.15);}
+.mc-n{background:#0D1525;border:1px solid var(--navy4);}
+.mc .ml{font-size:10px;margin-bottom:2px;}
+.mc-fix .ml{color:var(--fix);}
+.mc-ext .ml{color:var(--ext);}
+.mc-var .ml{color:var(--var);}
+.mc-n .ml{color:var(--text2);}
+.mc .mv{font-size:14px;font-weight:700;}
+.mc .mv span{font-size:10px;margin-left:2px;color:var(--text2);}
+
+.ab{border-radius:10px;padding:13px;margin:12px 0;}
+.ab-fix{background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);}
+.ab-ext{background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.15);}
+.ar{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.ar:last-child{border-bottom:none;}
+.al{color:var(--text2);font-size:12px;}
+.as{color:var(--text3);font-size:10px;margin-top:1px;}
+.av{font-size:14px;font-weight:700;}
+
+.saf-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:12px;}
+.sf-item{background:#0D1525;border:1px solid var(--navy4);border-radius:8px;padding:8px 4px;text-align:center;cursor:pointer;transition:.15s;}
+.sf-score{font-size:18px;font-weight:800;margin-bottom:2px;}
+.sf-lbl{font-size:9px;color:var(--text2);}
+.sf-bar{height:3px;border-radius:2px;margin-top:5px;}
+
+.kpi-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.kpi{background:var(--navy3);border:1px solid var(--navy4);border-radius:11px;padding:14px 12px;text-align:center;position:relative;overflow:hidden;}
+.kpi.kb{background:linear-gradient(135deg,#0D1B2E,#122035);border-color:var(--blue);}
+.kpi.kb::before,.kpi.kg::before,.kpi.kr::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.kpi.kb::before{background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.kpi.kg{background:linear-gradient(135deg,#1A2540,#1E2D4A);border-color:var(--gold);}
+.kpi.kg::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.kpi.kr{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.3);}
+.kpi.kr::before{background:linear-gradient(90deg,transparent,var(--red),transparent);}
+.kpi .kl{color:var(--text2);font-size:11px;margin-bottom:5px;}
+.kpi .kv{font-size:18px;font-weight:800;color:var(--text);}
+.kpi .ks{color:var(--text3);font-size:10px;margin-top:4px;}
+
+.sum{background:linear-gradient(135deg,#0A1525,#0F1E35);border:1px solid var(--blue);border-radius:13px;padding:16px 18px;margin-bottom:14px;position:relative;overflow:hidden;}
+.sum::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--blue2),var(--blue));}
+.stag{color:var(--blue);font-size:10px;letter-spacing:.12em;margin-bottom:6px;}
+.stxt{color:var(--text);font-size:13px;line-height:1.85;}
+
+.py-wrap{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.py-btn{background:transparent;border:1px solid var(--navy4);border-radius:8px;color:var(--text2);padding:6px 13px;font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.py-btn.on{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#0A1628;border-color:var(--blue);font-weight:700;}
+
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{color:var(--blue);font-size:10px;font-weight:600;padding:7px 6px;border-bottom:1px solid var(--navy4);text-align:right;}
+th:first-child{text-align:left;}
+td{padding:8px 6px;border-bottom:1px solid var(--navy4);text-align:right;color:var(--text);}
+td:first-child{text-align:left;}
+tr.sel-r{background:rgba(96,165,250,.07);}
+tr.sel-r td:first-child{color:var(--blue);font-weight:700;}
+tr:hover{background:rgba(255,255,255,.02);cursor:pointer;}
+
+.fin{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:8px;margin-bottom:7px;}
+.fn{background:#0D1525;border:1px solid var(--navy4);}
+.ff{background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.15);}
+.fe{background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.15);}
+.fv2{background:rgba(251,176,64,.05);border:1px solid rgba(251,176,64,.15);}
+.ft{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.3);}
+.fl2{color:var(--text2);font-size:12px;}
+.fs2{font-size:10px;margin-top:1px;}
+.fv3{font-size:14px;font-weight:700;color:var(--text);}
+
+.comp{background:#0D1525;border:1px solid var(--navy4);border-radius:9px;padding:10px 12px;margin-bottom:7px;}
+.bar-bg{height:3px;background:var(--navy4);border-radius:2px;overflow:hidden;}
+.bar-fg{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;}
+
+.bp{padding:13px;background:linear-gradient(135deg,var(--blue),var(--blue2));color:#0A1628;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.bs{padding:11px 15px;background:transparent;color:var(--text2);border:1px solid var(--navy4);border-radius:11px;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.tip{background:#0A1020;border:1px solid var(--navy4);border-radius:8px;padding:7px 11px;margin-bottom:13px;font-size:11px;color:var(--text2);}
+.wb{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:10px 13px;margin-bottom:10px;}
+.wt{color:var(--red);font-size:12px;font-weight:700;margin-bottom:3px;}
+.wd{color:var(--text2);font-size:11px;line-height:1.6;}
+.note{text-align:center;color:var(--text3);font-size:10px;margin-top:24px;padding:0 14px;line-height:1.7;}
+@media(max-width:480px){.g3{grid-template-columns:1fr 1fr;}.saf-grid{grid-template-columns:repeat(3,1fr);}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-icon">천</div>
+    <span class="nav-brand">천호 정비사업 센터</span>
+  </a>
+  <div class="nav-links">
+    <a href="simulator.html" class="nav-link">재개발</a>
+    <a href="reconstruction.html" class="nav-link on">재건축</a>
+  </div>
+</nav>
+<div class="hdr">
+  <div class="hdr-tag">RECONSTRUCTION SIMULATOR · 아파트 단지 전용</div>
+  <h1>천호동 재건축 시뮬레이터</h1>
+  <p>서울시 강동구 · 2025년 기준 추산</p>
+  <div class="legend">
+    <span class="leg"><span class="leg-dot" style="background:var(--fix)"></span><span style="color:var(--fix)">고정값</span> 내가 아는 팩트</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--ext)"></span><span style="color:var(--ext)">타인결정</span> 내가 통제 불가</span>
+    <span class="leg"><span class="leg-dot" style="background:var(--var)"></span><span style="color:var(--var)">유동값</span> 시장·시간 변동</span>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="go(1)" id="tab1"><span class="tab-n">1</span>내 아파트</button>
+    <button class="tab" onclick="go(2)" id="tab2"><span class="tab-n">2</span>변수 입력</button>
+    <button class="tab" onclick="go(3)" id="tab3"><span class="tab-n">3</span>분석 결과</button>
+  </div>
+</div>
+<div class="page" id="page"></div>
+<div class="note">※ 참고용 추산이며 실제 사업성은 조합 및 감정평가 전문가 확인이 필요합니다.</div>
+
+<script>
+const COMP=[{name:'고덕 아르테온',price:16.8,year:2019},{name:'올림픽파크포레온',price:18.5,year:2023},{name:'강동 헤리츠',price:14.2,year:2021},{name:'천호 e편한세상',price:13.1,year:2022}];
+const UNITS=[{label:'25평',p:25},{label:'32평',p:32},{label:'34평',p:34},{label:'40평',p:40},{label:'45평',p:45}];
+const SAF={A:{score:90,label:'양호',color:'#4ADE80',pass:false},B:{score:75,label:'보통',color:'#FBB040',pass:false},C:{score:60,label:'조건부',color:'#FB923C',pass:true},D:{score:45,label:'불량',color:'#F87171',pass:true},E:{score:20,label:'최불량',color:'#EF4444',pass:true}};
+
+let S={
+  step:1,selPy:'34평',
+  myPrice:8,myArea:84,landShare:18,currFar:180,totalUnits:500,
+  appraisalRate:85,safetyGrade:'D',pub:12,
+  cc:960,gsp:5200,msp:4000,far:300,exp:25,memberRatio:45,lr:4.5,cd:0,sd:0
+};
+
+function calc(){
+  const{myPrice:mp,landShare,currFar,totalUnits,appraisalRate,pub,cc,gsp,msp,far,exp,memberRatio,lr,cd,sd}=S;
+  const ap=mp*(appraisalRate/100);
+  const landVal=landShare*400/10000;
+  const rv=(ap+landVal)/2;
+  const effFar=far*(1-pub/100);
+  const addU=Math.floor(totalUnits*(effFar-currFar)/currFar*0.6);
+  const memU=Math.floor(totalUnits*(memberRatio/100));
+  const genU=Math.max(0,addU+(totalUnits-memU)-Math.floor(totalUnits*0.1));
+  const aC=cc*(1+cd/100),aG=gsp*(1+sd/100);
+  const tfp=(totalUnits+addU)*34;
+  const tCon=(tfp*aC)/10000,tExp=tCon*(1+exp/100);
+  const genInc=(genU*34*aG)/10000;
+  const tpa=totalUnits*mp;
+  const pr=tpa>0?(genInc-tExp)/tpa*100:0;
+  const ml=ap*0.6,mi=ml*(lr/100)*1.5;
+  const avg=COMP.reduce((s,c)=>s+c.price,0)/COMP.length;
+  const uc=UNITS.map(u=>{
+    const ump=(u.p*msp)/10000,adc=ump-rv,ti=mp+Math.max(0,adc)+mi,sm=(avg-ti)/ti*100;
+    const ep=ump*1.12,profit=Math.max(0,ep-mp-0.8-Math.max(0,adc)*0.5);
+    const rate=profit>5?.5:profit>4?.4:profit>3?.3:profit>2?.2:profit>0?.1:0;
+    const exT=profit*rate,totalCost=mp+Math.max(0,adc)+mi+exT;
+    return{...u,ump:ump.toFixed(2),adc:adc.toFixed(2),mi:mi.toFixed(2),ti:ti.toFixed(2),sm:sm.toFixed(1),exT:exT.toFixed(2),totalCost:totalCost.toFixed(2)};
+  });
+  const sel=uc.find(u=>u.label===S.selPy)||uc[2];
+  return{ap:ap.toFixed(2),pr:pr.toFixed(1),rv:rv.toFixed(2),landVal:landVal.toFixed(2),ml:ml.toFixed(2),mi:mi.toFixed(2),gi:genInc.toFixed(1),te:tExp.toFixed(1),uc,sel};
+}
+
+function col(v){return parseFloat(v)<2?'var(--green)':parseFloat(v)<5?'var(--gold)':'var(--red)';}
+function sg(v){return(parseFloat(v)>=0?'+':'')+v;}
+
+function slF(lbl,val,min,max,step,unit,key,hint=''){
+  return`<div class="sw sf-fix"><div class="sr2"><span class="sl">${lbl}<span class="dot" style="color:var(--fix)">●고정</span></span><span class="sv" style="color:var(--fix)">${val.toLocaleString()} ${unit}</span></div><input type="range" min="${min}" max="${max}" step="${step}" value="${val}" oninput="st('${key}',+this.value)">${hint?`<div class="sh">${hint}</div>`:''}</div>`;
+}
+function slE(lbl,val,min,max,step,unit,key,hint=''){
+  return`<div class="sw sf-ext"><div class="sr2"><span class="sl">${lbl}<span class="dot" style="color:var(--ext)">●타인결정</span></span><span class="sv" style="color:var(--ext)">${val.toLocaleString()} ${unit}</span></div><input type="range" min="${min}" max="${max}" step="${step}" value="${val}" oninput="st('${key}',+this.value)">${hint?`<div class="sh">${hint}</div>`:''}</div>`;
+}
+function slV(lbl,val,min,max,step,unit,key,hint=''){
+  return`<div class="sw sf-var"><div class="sr2"><span class="sl">${lbl}<span class="dot" style="color:var(--var)">●유동</span></span><span class="sv" style="color:var(--var)">${val.toLocaleString()} ${unit}</span></div><input type="range" min="${min}" max="${max}" step="${step}" value="${val}" oninput="st('${key}',+this.value)">${hint?`<div class="sh">${hint}</div>`:''}</div>`;
+}
+
+function go(n){S.step=n;render();}
+function st(k,v){S[k]=v;render();}
+function setPy(l){S.selPy=l;render();}
+function setSf(g){S.safetyGrade=g;render();}
+function setScene(s){const sc={best:{cc:800,gsp:5500,msp:4200,far:320,exp:22,memberRatio:50,lr:3.5},normal:{cc:960,gsp:5200,msp:4000,far:300,exp:25,memberRatio:45,lr:4.5},worst:{cc:1200,gsp:4500,msp:3500,far:270,exp:30,memberRatio:40,lr:6.0}};Object.assign(S,sc[s]);render();}
+
+function render(){
+  ['tab1','tab2','tab3'].forEach((t,i)=>document.getElementById(t).classList.toggle('on',i+1===S.step));
+  const C=calc(),sf=SAF[S.safetyGrade],pg=document.getElementById('page');
+
+  if(S.step===1){
+    pg.innerHTML=`
+    <div class="zone z-fix">
+      <div class="zone-hdr"><div class="zone-icon">📌</div><div><div class="zone-title">고정값 — 내가 지금 확인할 수 있는 팩트</div><div class="zone-desc">등기부등본 · 실거래가 · 건축물대장으로 확인 가능</div></div></div>
+      <div class="sr2" style="margin-bottom:7px"><span class="sl">현재 시세<span class="dot" style="color:var(--fix)">●고정</span></span><span class="sv" style="color:var(--fix)">${S.myPrice}억</span></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <input class="big-inp" style="border-color:var(--fix);color:var(--fix)" type="number" value="${S.myPrice}" min="1" max="30" step="0.5" oninput="st('myPrice',+this.value)">
+        <span style="color:var(--text2)">억원</span>
+      </div>
+      <div class="sf-fix"><input type="range" min="3" max="30" step="0.5" value="${S.myPrice}" oninput="st('myPrice',+this.value)" style="margin-bottom:12px"></div>
+      ${slF('전용면적',S.myArea,40,165,1,'m²','myArea','내 아파트 전용면적')}
+      ${slF('대지지분',S.landShare,5,50,1,'평','landShare','등기부등본에서 확인')}
+      ${slF('현재 용적률',S.currFar,100,250,5,'%','currFar','건축물대장 · 구청 확인')}
+      ${slF('현재 총 세대수',S.totalUnits,100,2000,50,'세대','totalUnits','단지 전체 세대수')}
+      <div class="ab ab-fix">
+        <div style="color:var(--fix);font-size:10px;margin-bottom:8px">▸ 고정값 기반 자동 계산</div>
+        <div class="ar"><div><div class="al">대지지분 가치</div><div class="as">대지지분 × 400만원/평 (천호동 기준)</div></div><div class="av" style="color:var(--fix)">${C.landVal}억</div></div>
+      </div>
+    </div>
+
+    <div class="zone z-ext">
+      <div class="zone-hdr"><div class="zone-icon">🏛</div><div><div class="zone-title">타인결정값 — 내가 통제할 수 없는 값</div><div class="zone-desc">감정평가사 · 안전진단기관 · 구청이 결정 → 협상·대응 전략 필요</div></div></div>
+      <div style="margin-bottom:14px">
+        <div class="sl" style="margin-bottom:8px">안전진단 등급<span class="dot" style="color:var(--ext)">●타인결정 (안전진단 기관)</span></div>
+        <div class="saf-grid">
+          ${Object.entries(SAF).map(([g,v])=>`<div class="sf-item" style="${S.safetyGrade===g?`border:2px solid ${v.color};background:${v.color}18`:''}" onclick="setSf('${g}')"><div class="sf-score" style="color:${v.color}">${g}</div><div class="sf-lbl">${v.label}</div><div class="sf-bar" style="background:${v.color};opacity:${v.pass?1:.25}"></div></div>`).join('')}
+        </div>
+        ${!sf.pass?`<div class="wb"><div class="wt">⚠ ${S.safetyGrade}등급 — 재건축 불가</div><div class="wd">C·D·E등급이어야 재건축 진행 가능합니다.</div></div>`:`<div style="background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.15);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--fix)">✓ ${S.safetyGrade}등급 (${sf.label}) — 재건축 추진 가능</div>`}
+      </div>
+      ${slE('감정평가율',S.appraisalRate,70,95,1,'%','appraisalRate','감정평가사 결정. 아파트 평균 85%')}
+      ${slE('기부채납율',S.pub,5,20,1,'%','pub','구청 협상. 줄일수록 유리')}
+      <div class="ab ab-ext">
+        <div style="color:var(--ext);font-size:10px;margin-bottom:8px">▸ 타인결정값 기반 자동 계산</div>
+        <div class="ar"><div><div class="al">감정평가액 (추산)</div><div class="as">시세 × ${S.appraisalRate}% · 감정평가사 결정</div></div><div class="av" style="color:var(--ext)">${C.ap}억</div></div>
+        <div class="ar"><div><div class="al">권리가액 (추산)</div><div class="as">(감정평가액 + 대지지분가치) ÷ 2</div></div><div class="av" style="color:var(--ext)">${C.rv}억</div></div>
+      </div>
+    </div>
+
+    <button class="bp" style="width:100%" onclick="go(2)">다음 → 유동값·시장 변수 입력</button>`;
+
+  } else if(S.step===2){
+    pg.innerHTML=`
+    <div class="zone z-var">
+      <div class="zone-hdr"><div class="zone-icon">📈</div><div><div class="zone-title">유동값 — 시장·시간에 따라 변동</div><div class="zone-desc">공사비 협상, 분양 시점 시세, 금리 등 외부 변수</div></div></div>
+      ${slV('공사비 (만원/평)',S.cc,700,1300,10,'만원/평','cc','낙관 800 · 기준 960 · 보수 1,200')}
+      ${slV('일반분양가 (만원/평)',S.gsp,3500,8000,100,'만원/평','gsp','분양 시점 시세에 따라 결정')}
+      ${slV('조합원분양가 (만원/평)',S.msp,3000,6000,100,'만원/평','msp','일반분양가의 약 75~80%')}
+      ${slV('목표 용적률',S.far,200,400,5,'%','far','인허가 결과에 따라 변동')}
+      ${slV('제경비율',S.exp,15,40,1,'%','exp')}
+      ${slV('조합원물량비율',S.memberRatio,30,80,1,'%','memberRatio')}
+      ${slV('이주비 대출금리',S.lr,2,8,0.1,'%','lr','금융시장 변동')}
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="cb"></div><h2>시나리오 빠른 선택</h2><span class="bdg bdg-var">유동값</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+        <button onclick="setScene('best')" style="padding:11px 0;border-radius:9px;border:1px solid var(--fix);background:rgba(74,222,128,.08);color:var(--fix);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600">✓ 낙관</button>
+        <button onclick="setScene('normal')" style="padding:11px 0;border-radius:9px;border:1px solid var(--var);background:rgba(251,176,64,.08);color:var(--var);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600">◆ 기준</button>
+        <button onclick="setScene('worst')" style="padding:11px 0;border-radius:9px;border:1px solid var(--ext);background:rgba(248,113,113,.08);color:var(--ext);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600">▼ 보수</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;font-size:10px;color:var(--text3)">
+        <div>공사비 800<br>분양가 5,500</div>
+        <div>공사비 960<br>분양가 5,200</div>
+        <div>공사비 1,200<br>분양가 4,500</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button class="bs" onclick="go(1)">← 이전</button>
+      <button class="bp" style="flex:1" onclick="go(3)">결과 분석 →</button>
+    </div>`;
+
+  } else {
+    const c=col(C.sel.adc),smc=parseFloat(C.sel.sm)>0?'var(--green)':'var(--red)';
+    pg.innerHTML=`
+    <div class="sum">
+      <div class="stag">◆ 재건축 분석 결과 · 안전진단 ${S.safetyGrade}등급 (${SAF[S.safetyGrade].label})</div>
+      <div class="stxt">
+        <strong style="color:var(--fix)">${S.myPrice}억</strong> 아파트 →
+        <strong style="color:var(--blue)">${S.selPy}</strong> 신청 시<br>
+        추가분담금 <strong style="color:${c}">${sg(C.sel.adc)}억</strong>
+        + 이자 <strong>${C.sel.mi}억</strong>
+        + 초과이익환수금 <strong style="color:var(--red)">${C.sel.exT}억</strong><br>
+        실질 총비용 <strong style="color:var(--gold);font-size:15px">${C.sel.totalCost}억</strong>
+      </div>
+    </div>
+
+    ${!SAF[S.safetyGrade].pass?`<div class="wb"><div class="wt">⚠ ${S.safetyGrade}등급 — 재건축 불가</div><div class="wd">STEP 1로 돌아가 C·D·E등급으로 변경하세요.</div></div>`:''}
+
+    <div style="margin-bottom:12px">
+      <div style="color:var(--text2);font-size:11px;margin-bottom:7px">희망 평형 선택</div>
+      <div class="py-wrap">${UNITS.map(u=>`<button class="py-btn${u.label===S.selPy?' on':''}" onclick="setPy('${u.label}')">${u.label}</button>`).join('')}</div>
+    </div>
+
+    <div class="kpi-g">
+      <div class="kpi kb"><div class="kl">추가분담금</div><div class="kv" style="color:${c}">${sg(C.sel.adc)}억</div><div class="ks">조합원분양가 − 권리가액</div></div>
+      <div class="kpi"><div class="kl">비례율</div><div class="kv" style="color:${c}">${C.pr}%</div><div class="ks">수입 ${C.gi}억 / 지출 ${C.te}억</div></div>
+      <div class="kpi kr"><div class="kl" style="color:var(--red)">초과이익환수금 ★</div><div class="kv" style="color:var(--red)">${C.sel.exT}억</div><div class="ks">재건축 전용 · 타인결정</div></div>
+      <div class="kpi kg"><div class="kl">실질 총비용</div><div class="kv" style="color:var(--gold)">${C.sel.totalCost}억</div><div class="ks">분담금+이자+환수금</div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="cb"></div><h2>평형별 비용 비교</h2><span class="bdg bdg-b">UNIT ANALYSIS</span></div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>평형</th><th>분양가</th><th style="color:var(--var)">추가분담금</th><th>이자</th><th style="color:var(--ext)">환수금★</th><th style="color:var(--gold)">실질총비용</th></tr></thead>
+        <tbody>${C.uc.map(u=>{const cc2=col(u.adc);return`<tr class="${u.label===S.selPy?'sel-r':''}" onclick="setPy('${u.label}')"><td>${u.label===S.selPy?'▶':''} ${u.label}</td><td>${u.ump}억</td><td style="color:${cc2};font-weight:700">${sg(u.adc)}억</td><td>${u.mi}억</td><td style="color:var(--red);font-weight:700">${u.exT}억</td><td style="color:var(--gold);font-weight:700">${u.totalCost}억</td></tr>`;}).join('')}</tbody>
+      </table></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="cb"></div><h2>민감도 분석</h2><span class="bdg bdg-var">유동값 변동</span></div>
+      ${slV('공사비 변동',S.cd,-20,30,1,'%','cd',`${S.cc}만 → ${(S.cc*(1+S.cd/100)).toFixed(0)}만원/평`)}
+      ${slV('일반분양가 변동',S.sd,-20,30,1,'%','sd',`${S.gsp}만 → ${(S.gsp*(1+S.sd/100)).toFixed(0)}만원/평`)}
+      <div style="background:#0D1525;border:1px solid var(--navy4);border-radius:9px;padding:12px 13px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px">
+          ${[['비례율',`${C.pr}%`,'var(--blue)'],['추가분담금',`${sg(C.sel.adc)}억`,'var(--var)'],['실질총비용',`${C.sel.totalCost}억`,'var(--gold)']].map(([l,v,co])=>`<div style="text-align:center"><div style="color:var(--text2);font-size:9px">${l}</div><div style="color:${co};font-size:13px;font-weight:700;margin-top:2px">${v}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="cb"></div><h2>비용 상세 내역</h2><span class="bdg bdg-b">FINANCE</span></div>
+      <div style="display:flex;gap:12px;margin-bottom:11px;font-size:10px">
+        <span style="color:var(--fix)">●고정</span><span style="color:var(--ext)">●타인결정</span><span style="color:var(--var)">●유동</span>
+      </div>
+      <div class="fin ff"><div><div class="fl2">현재 아파트 <span class="dot" style="color:var(--fix)">●고정</span></div><div class="fs2" style="color:var(--fix)">내가 보유한 자산</div></div><div class="fv3" style="color:var(--fix)">${S.myPrice}억</div></div>
+      <div class="fin fe"><div><div class="fl2">감정평가액 <span class="dot" style="color:var(--ext)">●타인결정</span></div><div class="fs2" style="color:var(--ext)">시세 × ${S.appraisalRate}% · 감정평가사 결정</div></div><div class="fv3" style="color:var(--ext)">${C.ap}억</div></div>
+      <div class="fin fe"><div><div class="fl2">권리가액 <span class="dot" style="color:var(--ext)">●타인결정</span></div><div class="fs2" style="color:var(--ext)">(감정평가액 + 대지지분가치) ÷ 2</div></div><div class="fv3" style="color:var(--ext)">${C.rv}억</div></div>
+      <div class="fin fv2"><div><div class="fl2">추가분담금 <span class="dot" style="color:var(--var)">●유동</span></div><div class="fs2" style="color:var(--var)">조합원분양가 − 권리가액</div></div><div class="fv3" style="color:${col(C.sel.adc)}">${sg(C.sel.adc)}억</div></div>
+      <div class="fin fv2"><div><div class="fl2">이주비 이자 <span class="dot" style="color:var(--var)">●유동</span></div><div class="fs2" style="color:var(--var)">대출 × ${S.lr}% × 1.5년</div></div><div class="fv3" style="color:var(--var)">${C.sel.mi}억</div></div>
+      <div class="fin fe"><div><div class="fl2">초과이익환수금 ★ <span class="dot" style="color:var(--ext)">●타인결정</span></div><div class="fs2" style="color:var(--ext)">국토부 기준 · 준공 시점 확정</div></div><div class="fv3" style="color:var(--red)">${C.sel.exT}억</div></div>
+      <div class="fin ft"><div><div class="fl2" style="font-weight:700">실질 총비용</div><div class="fs2" style="color:var(--gold)">현집값 + 분담금 + 이자 + 환수금</div></div><div class="fv3" style="color:var(--gold)">${C.sel.totalCost}억</div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="cb"></div><h2>인근 재건축 단지 시세</h2><span class="bdg bdg-g">MARKET</span></div>
+      ${COMP.map(c=>`<div class="comp"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><div><span style="color:var(--text);font-size:12px;font-weight:600">${c.name}</span><span style="color:var(--text2);font-size:10px;margin-left:5px">${c.year}년</span></div><span style="color:var(--gold);font-weight:700;font-size:13px">${c.price}억</span></div><div class="bar-bg"><div class="bar-fg" style="width:${Math.min(c.price/20*100,100)}%"></div></div></div>`).join('')}
+      <div style="background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.25);border-radius:9px;padding:12px 13px;margin-top:6px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="color:var(--text2);font-size:10px">내 실질 총비용 (${S.selPy})</div><div style="color:var(--blue);font-size:17px;font-weight:700">${C.sel.totalCost}억</div></div>
+        <div style="text-align:right"><div style="color:var(--text2);font-size:10px">인근 평균 대비</div><div style="color:${smc};font-size:14px;font-weight:700">${parseFloat(C.sel.sm)>0?'✓':'✗'} ${C.sel.sm}% 마진</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button class="bs" onclick="go(2)">← 조건 수정</button>
+      <button class="bs" style="flex:1" onclick="go(1)">처음으로</button>
+    </div>`;
+  }
+}
+render();
+</script>
+</body>
+</html>
