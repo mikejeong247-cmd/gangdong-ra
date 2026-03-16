@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>천호동 재개발 정보센터 | 천호1동·3동</title>
+<title>천호동 정비사업 정보센터 | 재개발·재건축</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -11,6 +11,7 @@
   --gold:#C9A84C;--gold2:#E8C97A;--gold3:rgba(201,168,76,0.12);
   --text:#F0E8D4;--text2:#8A9BBE;--text3:#4A6080;
   --green:#4ADE80;--red:#F87171;
+  --blue:#60A5FA;--blue2:#93C5FD;
   --r:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -42,6 +43,37 @@ nav{
 }
 .nav-cta:hover{opacity:.85;}
 
+/* 선택 카드 (히어로 하단) */
+.choose-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px;width:100%;}
+.choose-card{
+  border-radius:16px;padding:28px 24px;text-decoration:none;color:inherit;
+  position:relative;overflow:hidden;transition:transform .2s;display:block;
+}
+.choose-card:hover{transform:translateY(-4px);}
+.choose-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.choose-redev{background:#111A2C;border:1px solid rgba(201,168,76,0.3);}
+.choose-redev::before{background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.choose-recon{background:#0D1525;border:1px solid rgba(96,165,250,0.3);}
+.choose-recon::before{background:linear-gradient(90deg,var(--blue),var(--blue2));}
+.choose-tag{font-size:10px;letter-spacing:.15em;margin-bottom:10px;}
+.choose-redev .choose-tag{color:var(--gold);}
+.choose-recon .choose-tag{color:var(--blue);}
+.choose-title{font-size:20px;font-weight:700;margin-bottom:8px;}
+.choose-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:18px;}
+.choose-features{display:flex;flex-direction:column;gap:5px;margin-bottom:20px;}
+.choose-feature{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.choose-redev .choose-feature::before{content:'✓';color:var(--gold);font-weight:700;}
+.choose-recon .choose-feature::before{content:'✓';color:var(--blue);font-weight:700;}
+.choose-btn{display:inline-block;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:700;}
+.choose-redev .choose-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);}
+.choose-recon .choose-btn{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#0A1628;}
+.choose-arrow{position:absolute;top:24px;right:24px;font-size:16px;transition:.2s;}
+.choose-redev .choose-arrow{color:rgba(201,168,76,0.4);}
+.choose-recon .choose-arrow{color:rgba(96,165,250,0.4);}
+.choose-card:hover .choose-arrow{transform:translate(3px,-3px);}
+.choose-redev:hover .choose-arrow{color:var(--gold);}
+.choose-recon:hover .choose-arrow{color:var(--blue);}
+
 /* HERO */
 .hero{
   min-height:100vh;display:flex;align-items:center;
@@ -53,7 +85,8 @@ nav{
   background:radial-gradient(ellipse 80% 60% at 60% 40%, rgba(201,168,76,0.08) 0%, transparent 60%),
              radial-gradient(ellipse 50% 40% at 20% 80%, rgba(30,45,74,0.8) 0%, transparent 50%);
 }
-.hero-inner{max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.hero-inner{max-width:1100px;margin:0 auto;width:100%;position:relative;z-index:1;}
+.hero-top{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-bottom:60px;}
 .hero-tag{
   display:inline-flex;align-items:center;gap:8px;
   background:var(--gold3);border:1px solid rgba(201,168,76,0.3);
@@ -237,7 +270,7 @@ footer{
 <nav>
   <div class="nav-logo">
     <div class="nav-logo-icon">천</div>
-    <span class="nav-brand">천호 재개발 정보센터</span>
+    <span class="nav-brand">천호 정비사업 센터</span>
   </div>
   <div class="nav-links">
     <a href="#tools">분석 도구</a>
@@ -245,50 +278,69 @@ footer{
     <a href="#info">주요 현황</a>
     <a href="#faq">FAQ</a>
   </div>
-  <a href="simulator.html" class="nav-cta">상세 시뮬레이터 →</a>
+  <div style="display:flex;gap:10px;">
+    <a href="simulator.html" class="nav-cta" style="background:linear-gradient(135deg,var(--gold),var(--gold2))">재개발 →</a>
+    <a href="reconstruction.html" class="nav-cta" style="background:linear-gradient(135deg,var(--blue),var(--blue2));color:#0A1628;">재건축 →</a>
+  </div>
 </nav>
 
 <section class="hero">
   <div class="hero-inner">
-    <div>
-      <div class="hero-tag">🏗 서울시 강동구 · 2025년 기준</div>
-      <h1>천호동 재개발,<br><em>내 집은 얼마나</em><br>달라질까?</h1>
-      <p class="hero-desc">천호1동·3동 재개발 사업의 핵심 정보를 한눈에.<br>내 집 시세만 입력하면 추가분담금·비례율·총투자비를<br>자동으로 계산해 드립니다.</p>
-      <div class="hero-btns">
-        <a href="calculator.html" class="btn-primary">간단 계산기 시작 →</a>
-        <a href="simulator.html" class="btn-secondary">상세 시뮬레이터</a>
+    <div class="hero-top">
+      <div>
+        <div class="hero-tag">🏗 서울시 강동구 · 2025년 기준</div>
+        <h1>천호동 정비사업,<br><em>내 집은 얼마나</em><br>달라질까?</h1>
+        <p class="hero-desc">재개발·재건축 시뮬레이터로<br>추가분담금·비례율·총투자비를 자동 계산합니다.</p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-title">◆ 천호1·3동 사업 현황</div>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-label">평균 감정평가율</div><div class="stat-value">78%</div><div class="stat-sub">시세 대비</div></div>
+          <div class="stat"><div class="stat-label">기준 용적률</div><div class="stat-value">280%</div><div class="stat-sub">제3종 일반주거</div></div>
+          <div class="stat"><div class="stat-label">기부채납율</div><div class="stat-value">11%</div><div class="stat-sub">서울시 표준</div></div>
+          <div class="stat"><div class="stat-label">평균 공사비</div><div class="stat-value">950만</div><div class="stat-sub">만원/평</div></div>
+        </div>
+        <div class="districts">
+          <div class="district-row"><span class="district-name">천호1구역</span><span class="district-badge badge-active">사업시행인가</span></div>
+          <div class="district-row"><span class="district-name">천호2구역</span><span class="district-badge badge-active">조합설립인가</span></div>
+          <div class="district-row"><span class="district-name">천호3구역</span><span class="district-badge badge-pending">추진위 구성</span></div>
+          <div class="district-row"><span class="district-name">성내1구역</span><span class="district-badge badge-active">관리처분인가</span></div>
+        </div>
       </div>
     </div>
-    <div class="hero-card">
-      <div class="hero-card-title">◆ 천호1·3동 사업 현황</div>
-      <div class="stat-grid">
-        <div class="stat">
-          <div class="stat-label">평균 감정평가율</div>
-          <div class="stat-value">78%</div>
-          <div class="stat-sub">시세 대비</div>
+
+    <!-- 재개발 vs 재건축 선택 카드 -->
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="color:var(--text2);font-size:13px;margin-bottom:6px;">내 집 유형을 선택하세요</div>
+      <div style="color:var(--text3);font-size:12px;">단독·다세대 주택 → 재개발 &nbsp;|&nbsp; 아파트 단지 → 재건축</div>
+    </div>
+    <div class="choose-wrap">
+      <a href="simulator.html" class="choose-card choose-redev">
+        <span class="choose-arrow">↗</span>
+        <div class="choose-tag">◆ 재개발 · 단독·다세대 주택</div>
+        <div class="choose-title">재개발 시뮬레이터</div>
+        <div class="choose-desc">천호1·3동 단독·다세대·연립 소유자를 위한 시뮬레이터. 비례율과 추가분담금을 계산합니다.</div>
+        <div class="choose-features">
+          <div class="choose-feature">감정평가액 자동 역산 (시세×78%)</div>
+          <div class="choose-feature">비례율·권리가액·추가분담금 계산</div>
+          <div class="choose-feature">낙관/기준/보수 3가지 시나리오</div>
+          <div class="choose-feature">인근 신축 시세 비교</div>
         </div>
-        <div class="stat">
-          <div class="stat-label">기준 용적률</div>
-          <div class="stat-value">280%</div>
-          <div class="stat-sub">제3종 일반주거</div>
+        <span class="choose-btn">재개발 시뮬레이터 시작 →</span>
+      </a>
+      <a href="reconstruction.html" class="choose-card choose-recon">
+        <span class="choose-arrow">↗</span>
+        <div class="choose-tag">◆ 재건축 · 아파트 단지</div>
+        <div class="choose-title">재건축 시뮬레이터</div>
+        <div class="choose-desc">천호동 아파트 단지 소유자를 위한 시뮬레이터. 대지지분·안전진단·초과이익환수금까지 계산합니다.</div>
+        <div class="choose-features">
+          <div class="choose-feature">대지지분 기반 권리가액 계산</div>
+          <div class="choose-feature">안전진단 등급 A~E 반영</div>
+          <div class="choose-feature">초과이익환수금 자동 계산 ★</div>
+          <div class="choose-feature">고정값·타인결정·유동값 3구역 분리</div>
         </div>
-        <div class="stat">
-          <div class="stat-label">기부채납율</div>
-          <div class="stat-value">11%</div>
-          <div class="stat-sub">서울시 표준</div>
-        </div>
-        <div class="stat">
-          <div class="stat-label">평균 공사비</div>
-          <div class="stat-value">950만</div>
-          <div class="stat-sub">만원/평</div>
-        </div>
-      </div>
-      <div class="districts">
-        <div class="district-row"><span class="district-name">천호1구역</span><span class="district-badge badge-active">사업시행인가</span></div>
-        <div class="district-row"><span class="district-name">천호2구역</span><span class="district-badge badge-active">조합설립인가</span></div>
-        <div class="district-row"><span class="district-name">천호3구역</span><span class="district-badge badge-pending">추진위 구성</span></div>
-        <div class="district-row"><span class="district-name">성내1구역</span><span class="district-badge badge-active">관리처분인가</span></div>
-      </div>
+        <span class="choose-btn">재건축 시뮬레이터 시작 →</span>
+      </a>
     </div>
   </div>
 </section>
@@ -296,34 +348,55 @@ footer{
 <section id="tools">
   <div class="section-inner">
     <div class="section-tag">◆ ANALYSIS TOOLS</div>
-    <h2 class="section-title">두 가지 분석 도구를 준비했습니다</h2>
-    <p class="section-desc">간단 계산기는 일반 주민을 위한 핵심 요약, 상세 시뮬레이터는 조합원·투자자를 위한 심층 분석입니다.</p>
-    <div class="tools-grid">
+    <h2 class="section-title">4가지 분석 도구를 준비했습니다</h2>
+    <p class="section-desc">내 집 유형에 맞는 도구를 선택하세요. 단독·다세대는 재개발, 아파트 단지는 재건축입니다.</p>
+    <div class="tools-grid" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-top:48px;">
       <a href="calculator.html" class="tool-card">
         <span class="tool-arrow">↗</span>
         <div class="tool-icon">🧮</div>
-        <span class="tool-tag">SIMPLE · 일반 주민용</span>
+        <span class="tool-tag">SIMPLE</span>
         <h3 class="tool-title">간단 계산기</h3>
-        <p class="tool-desc">시세만 입력하면 30초 안에 핵심 결과를 확인합니다. 복잡한 용어 없이 쉽게.</p>
+        <p class="tool-desc">시세만 입력하면 30초 안에 핵심 결과를 확인합니다.</p>
         <div class="tool-features">
-          <div class="tool-feature">시세 → 감정평가액 자동 역산</div>
+          <div class="tool-feature">감정평가액 자동 역산</div>
           <div class="tool-feature">추가분담금 즉시 계산</div>
           <div class="tool-feature">평형 선택 비교</div>
-          <div class="tool-feature">결과 간단 요약</div>
         </div>
       </a>
       <a href="simulator.html" class="tool-card">
         <span class="tool-arrow">↗</span>
         <div class="tool-icon">📊</div>
-        <span class="tool-tag">ADVANCED · 조합원·투자자용</span>
-        <h3 class="tool-title">상세 시뮬레이터</h3>
-        <p class="tool-desc">사업 조건 전체를 직접 조정하며 수익성을 심층 분석합니다. 민감도·금융비용 포함.</p>
+        <span class="tool-tag" style="color:var(--gold)">재개발</span>
+        <h3 class="tool-title">재개발 시뮬레이터</h3>
+        <p class="tool-desc">단독·다세대 밀집지역 전용. 사업 조건 전체를 심층 분석합니다.</p>
         <div class="tool-features">
-          <div class="tool-feature">사업 조건 9개 슬라이더 조정</div>
-          <div class="tool-feature">평형별 수익성 비교표</div>
-          <div class="tool-feature">민감도 분석 (공사비/분양가)</div>
-          <div class="tool-feature">금융비용·이자 상세 계산</div>
-          <div class="tool-feature">인근 4개 단지 시세 비교</div>
+          <div class="tool-feature">비례율·추가분담금 계산</div>
+          <div class="tool-feature">평형별 수익성 비교</div>
+          <div class="tool-feature">민감도·금융비용 분석</div>
+        </div>
+      </a>
+      <a href="reconstruction.html" class="tool-card" style="border-color:rgba(96,165,250,0.25);">
+        <span class="tool-arrow" style="color:rgba(96,165,250,0.4)">↗</span>
+        <div class="tool-icon" style="background:rgba(96,165,250,0.1);border-color:rgba(96,165,250,0.2)">🏢</div>
+        <span class="tool-tag" style="background:rgba(96,165,250,0.1);color:var(--blue);border-color:rgba(96,165,250,0.2)">재건축</span>
+        <h3 class="tool-title">재건축 시뮬레이터</h3>
+        <p class="tool-desc">아파트 단지 전용. 안전진단·초과이익환수금까지 포함합니다.</p>
+        <div class="tool-features">
+          <div class="tool-feature" style="color:var(--text2)">안전진단 등급 반영</div>
+          <div class="tool-feature" style="color:var(--text2)">초과이익환수금 계산</div>
+          <div class="tool-feature" style="color:var(--text2)">3구역 고정·타인·유동값</div>
+        </div>
+      </a>
+      <a href="simulator.html" class="tool-card">
+        <span class="tool-arrow">↗</span>
+        <div class="tool-icon">📋</div>
+        <span class="tool-tag">GUIDE</span>
+        <h3 class="tool-title">재개발 vs 재건축</h3>
+        <p class="tool-desc">내 집이 재개발인지 재건축인지 모르겠다면 여기서 확인하세요.</p>
+        <div class="tool-features">
+          <div class="tool-feature">단독·다세대 → 재개발</div>
+          <div class="tool-feature">아파트 단지 → 재건축</div>
+          <div class="tool-feature">핵심 차이점 비교</div>
         </div>
       </a>
     </div>
@@ -447,21 +520,23 @@ footer{
     <h2>지금 바로 내 집 수익성을 확인하세요</h2>
     <p>시세만 알면 됩니다. 30초면 추가분담금과 총투자비를 확인할 수 있어요.</p>
     <div class="cta-btns">
-      <a href="calculator.html" class="btn-primary">간단 계산기 시작 →</a>
-      <a href="simulator.html" class="btn-secondary">상세 시뮬레이터</a>
+      <a href="simulator.html" class="btn-primary">재개발 시뮬레이터 →</a>
+      <a href="reconstruction.html" class="btn-secondary" style="border-color:var(--blue);color:var(--blue)">재건축 시뮬레이터 →</a>
+      <a href="calculator.html" class="btn-secondary">간단 계산기</a>
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="footer-logo">천호 재개발 정보센터</div>
+  <div class="footer-logo">천호 정비사업 정보센터</div>
   <p class="footer-desc">본 사이트의 모든 계산 결과는 참고용 추산치이며, 실제 감정평가액·비례율·추가분담금은 사업 진행에 따라 달라질 수 있습니다. 중요한 결정 전에는 반드시 조합 또는 감정평가 전문가에게 확인하세요.</p>
   <div class="footer-links">
     <a href="calculator.html">간단 계산기</a>
-    <a href="simulator.html">상세 시뮬레이터</a>
+    <a href="simulator.html">재개발 시뮬레이터</a>
+    <a href="reconstruction.html">재건축 시뮬레이터</a>
     <a href="#faq">FAQ</a>
   </div>
-  <p style="color:var(--text3);font-size:11px;margin-top:20px;">© 2025 천호 재개발 정보센터 | 참고용이며 투자 권유가 아닙니다</p>
+  <p style="color:var(--text3);font-size:11px;margin-top:20px;">© 2025 천호 정비사업 정보센터 | 참고용이며 투자 권유가 아닙니다</p>
 </footer>
 
 <script>
