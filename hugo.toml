@@ -7,3 +7,36 @@ theme = "PaperMod"
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+
+      baseURL = 'https://4minwoo.pages.dev/'
+languageCode = 'ko-kr'
+title = '행정력? 지금은 실행력! 기호4번 개혁신당 구의원 후보 정민우'
+theme = "PaperMod"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[params]                          ← 여기부터 붙여넣기
+  homeInfoParams = true
+  description = "천호동 재개발·재건축 정보센터"
+
+[params.homeInfoParams]
+  Title = "행정력? 지금은 실행력!"
+  Content = "천호1동·3동 재개발·재건축 시뮬레이터로 내 집 수익성을 확인하세요."
+
+[[menus.main]]
+  name = "재개발 시뮬레이터"
+  url = "/simulator.html"
+  weight = 1
+
+[[menus.main]]
+  name = "재건축 시뮬레이터"
+  url = "/reconstruction.html"
+  weight = 2
+
+[[menus.main]]
+  name = "간단 계산기"
+  url = "/calculator.html"
+  weight = 3
