@@ -1,7 +1,7 @@
 baseURL = 'https://4minwoo.pages.dev/'
 languageCode = 'ko-kr'
 title = '행정력? 지금은 실행력! 기호4번 개혁신당 구의원 후보 정민우'
-theme = "PaperMod_New"
+theme = "PaperMod"
 
 [markup]
   [markup.goldmark]

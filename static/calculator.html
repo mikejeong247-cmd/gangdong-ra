@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>천호동 재개발 간단 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A0F1E;--navy2:#111827;--navy3:#141C2E;--navy4:#1E2D4A;
+  --gold:#C9A84C;--gold2:#E8C97A;--gold3:rgba(201,168,76,0.12);
+  --text:#F0E8D4;--text2:#8A9BBE;--text3:#4A6080;
+  --green:#4ADE80;--red:#F87171;--amber:#FBB040;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--navy);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;}
+
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,15,30,0.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--navy4);
+  padding:0 40px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-home{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gold);font-size:14px;}
+.nav-home span{color:var(--text2);}
+.nav-title{color:var(--text2);font-size:13px;}
+
+.page{max-width:640px;margin:0 auto;padding:40px 20px 80px;}
+
+.page-header{text-align:center;margin-bottom:40px;}
+.page-tag{display:inline-block;background:var(--gold3);color:var(--gold);font-size:11px;padding:4px 14px;border-radius:20px;letter-spacing:.15em;margin-bottom:14px;}
+.page-title{font-family:'Noto Serif KR',serif;font-size:28px;font-weight:700;margin-bottom:10px;}
+.page-desc{color:var(--text2);font-size:14px;line-height:1.7;}
+
+/* CARD */
+.card{background:var(--navy3);border:1px solid var(--navy4);border-radius:16px;padding:28px;margin-bottom:16px;}
+.card-title{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.card-bar{width:4px;height:20px;background:linear-gradient(180deg,var(--gold),var(--gold2));border-radius:2px;}
+.card-title h2{color:var(--text);font-size:15px;font-weight:700;}
+.card-badge{background:var(--gold3);color:var(--gold);font-size:10px;padding:2px 8px;border-radius:20px;}
+
+/* INPUT */
+.lbl{color:var(--text2);font-size:13px;display:block;margin-bottom:8px;}
+.inp-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.big-inp{
+  background:#0D1525;border:1px solid var(--gold);border-radius:10px;
+  padding:12px 18px;color:var(--gold);font-size:26px;font-weight:800;
+  width:150px;text-align:right;outline:none;
+}
+.big-inp:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(201,168,76,0.15);}
+.unit{color:var(--text2);font-size:17px;}
+input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer;}
+.range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:3px;}
+
+/* RESULT BOX */
+.result-box{
+  background:#0D1525;border:1px solid var(--navy4);border-radius:12px;padding:18px;
+}
+.result-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--navy4);}
+.result-row:last-child{border-bottom:none;}
+.res-lbl{color:var(--text2);font-size:13px;}
+.res-val{font-size:15px;font-weight:700;}
+.res-sub{color:var(--text3);font-size:11px;margin-top:2px;}
+
+/* PYEONG */
+.pyeong-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px;}
+.py-btn{
+  background:transparent;border:1px solid var(--navy4);border-radius:8px;
+  color:var(--text2);padding:10px 0;font-size:13px;cursor:pointer;transition:.15s;
+  text-align:center;font-family:'Noto Sans KR',sans-serif;
+}
+.py-btn:hover{border-color:var(--gold);color:var(--gold);}
+.py-btn.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;border-color:var(--gold);}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.kpi{
+  background:var(--navy3);border:1px solid var(--navy4);
+  border-radius:11px;padding:16px 14px;text-align:center;position:relative;overflow:hidden;
+}
+.kpi.hl{background:linear-gradient(135deg,#1A2540,#1E2D4A);border-color:var(--gold);}
+.kpi.hl::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.kpi-lbl{color:var(--text2);font-size:11px;margin-bottom:5px;}
+.kpi-val{font-size:20px;font-weight:800;color:var(--text);}
+.kpi.hl .kpi-val{color:var(--gold);}
+.kpi-sub{color:var(--text3);font-size:10px;margin-top:4px;}
+
+/* SUMMARY */
+.summary{
+  background:linear-gradient(135deg,#111825,#192035);
+  border:1px solid var(--gold);border-radius:14px;padding:20px;
+  position:relative;overflow:hidden;margin-bottom:16px;
+}
+.summary::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));}
+.sum-tag{color:var(--gold);font-size:10px;letter-spacing:.15em;margin-bottom:7px;}
+.sum-text{color:var(--text);font-size:14px;line-height:1.75;}
+
+/* BTN */
+.btn-p{width:100%;padding:15px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;font-family:'Noto Sans KR',sans-serif;}
+.btn-s{
+  width:100%;padding:13px;background:transparent;color:var(--text2);
+  border:1px solid var(--navy4);border-radius:11px;font-size:13px;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;text-decoration:none;display:block;text-align:center;margin-top:10px;
+  transition:.2s;
+}
+.btn-s:hover{border-color:var(--gold);color:var(--gold);}
+.warn{background:rgba(251,176,64,0.08);border:1px solid rgba(251,176,64,0.25);border-radius:10px;padding:14px;color:var(--text2);font-size:12px;line-height:1.7;margin-top:14px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-home">← <span>홈으로</span></a>
+  <span class="nav-title">간단 계산기</span>
+  <a href="simulator.html" style="color:var(--gold);font-size:13px;text-decoration:none;">상세 시뮬레이터 →</a>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <span class="page-tag">SIMPLE CALCULATOR · 일반 주민용</span>
+    <h1 class="page-title">재개발 간단 계산기</h1>
+    <p class="page-desc">내 집 시세만 입력하세요.<br>30초 안에 추가분담금을 확인할 수 있습니다.</p>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card">
+    <div class="card-title">
+      <div class="card-bar"></div>
+      <h2>내 집 현재 시세</h2>
+      <span class="card-badge">STEP 1</span>
+    </div>
+    <label class="lbl">시장가 (현재 매매 시세)</label>
+    <div class="inp-row">
+      <input class="big-inp" type="number" id="myPrice" value="5" min="1" max="20" step="0.1" oninput="update()">
+      <span class="unit">억원</span>
+    </div>
+    <input type="range" id="priceSlider" min="1" max="20" step="0.5" value="5" oninput="syncPrice(this.value)">
+    <div class="range-labels"><span>1억</span><span>20억</span></div>
+
+    <div class="result-box" style="margin-top:18px;">
+      <div class="result-row">
+        <div><div class="res-lbl">감정평가액 (추산)</div><div class="res-sub">= 시세 × 78%</div></div>
+        <div class="res-val" id="appraisal" style="color:var(--gold)">3.90억</div>
+      </div>
+      <div class="result-row">
+        <div><div class="res-lbl">이주비 대출 (추산)</div><div class="res-sub">= 감정액 × 60%</div></div>
+        <div class="res-val" id="movingLoan">2.34억</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card">
+    <div class="card-title">
+      <div class="card-bar"></div>
+      <h2>희망 입주 평형 선택</h2>
+      <span class="card-badge">STEP 2</span>
+    </div>
+    <div class="pyeong-grid">
+      <button class="py-btn" onclick="setPy(25,this)">25평</button>
+      <button class="py-btn" onclick="setPy(32,this)">32평</button>
+      <button class="py-btn on" onclick="setPy(34,this)">34평</button>
+      <button class="py-btn" onclick="setPy(40,this)">40평</button>
+      <button class="py-btn" onclick="setPy(45,this)">45평</button>
+    </div>
+    <div class="result-box">
+      <div class="result-row">
+        <div><div class="res-lbl">조합원 분양가</div><div class="res-sub">= 평형 × 3,800만원/평</div></div>
+        <div class="res-val" id="memberPrice" style="color:var(--text)">12.92억</div>
+      </div>
+      <div class="result-row">
+        <div><div class="res-lbl">비례율 (추산)</div><div class="res-sub">천호동 기준 사업 조건</div></div>
+        <div class="res-val" id="propRate" style="color:var(--amber)">85.0%</div>
+      </div>
+      <div class="result-row">
+        <div><div class="res-lbl">권리가액</div><div class="res-sub">= 감정평가액 × 비례율</div></div>
+        <div class="res-val" id="rightValue">3.32억</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card">
+    <div class="card-title">
+      <div class="card-bar"></div>
+      <h2>계산 결과</h2>
+      <span class="card-badge">RESULT</span>
+    </div>
+
+    <div class="summary">
+      <div class="sum-tag">◆ 한 줄 요약</div>
+      <div class="sum-text" id="summaryText"></div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi hl">
+        <div class="kpi-lbl">추가분담금</div>
+        <div class="kpi-val" id="addCost">-</div>
+        <div class="kpi-sub">조합원분양가 − 권리가액</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">이주비 이자</div>
+        <div class="kpi-val" id="movingInt">-</div>
+        <div class="kpi-sub">1.5년 · 금리 4.5%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">총 투자비</div>
+        <div class="kpi-val" id="totalInvest">-</div>
+        <div class="kpi-sub">현집값+분담금+이자</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">안전마진</div>
+        <div class="kpi-val" id="safeMargin">-</div>
+        <div class="kpi-sub">인근 신축 대비</div>
+      </div>
+    </div>
+
+    <a href="simulator.html" class="btn-p" style="display:block;text-align:center;text-decoration:none;">📊 상세 시뮬레이터로 심층 분석 →</a>
+    <div class="warn">⚠ 비례율은 천호동 기준 사업 조건(공사비 950만, 일반분양가 4800만, 용적률 280%)을 적용한 추산값입니다. 실제 사업 진행에 따라 달라집니다.</div>
+  </div>
+</div>
+
+<script>
+const COMP_AVG=11.725;
+let pyeong=34;
+
+function syncPrice(v){
+  document.getElementById('myPrice').value=v;
+  update();
+}
+
+function setPy(p,btn){
+  pyeong=p;
+  document.querySelectorAll('.py-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  update();
+}
+
+function fmt(v){return v.toFixed(2)+'억';}
+
+function update(){
+  const price=parseFloat(document.getElementById('myPrice').value)||5;
+  document.getElementById('priceSlider').value=price;
+
+  const ap=price*0.78;
+  const ml=ap*0.6;
+  const mi=ml*0.045*1.5;
+
+  // 천호동 기본 조건으로 비례율 계산
+  const land=15000, pub=0.11, far=2.80, cc=950, gsp=4800, msp=3800, exp=0.25;
+  const el=land*(1-pub);
+  const tf=el*far;
+  const tu=Math.floor(tf/112);
+  const mr2=0.40;
+  const gu=Math.floor(tu*(1-mr2));
+  const mc=Math.floor(land/50);
+  const tpa=mc*price;
+  const gi=(gu*112/3.3*gsp)/10000;
+  const tc=(tf/3.3*cc)/10000;
+  const te=tc*(1+exp);
+  const pr=tpa>0?(gi-te)/tpa*100:85;
+  const rv=ap*(pr/100);
+
+  const ump=(pyeong*msp)/10000;
+  const adc=ump-rv;
+  const ti=price+Math.max(0,adc)+mi;
+  const sm=(COMP_AVG-ti)/ti*100;
+  const col=adc<2?'var(--green)':adc<5?'var(--gold)':'var(--red)';
+  const smCol=sm>0?'var(--green)':'var(--red)';
+
+  document.getElementById('appraisal').textContent=fmt(ap);
+  document.getElementById('movingLoan').textContent=fmt(ml);
+  document.getElementById('memberPrice').textContent=fmt(ump);
+  document.getElementById('propRate').textContent=pr.toFixed(1)+'%';
+  document.getElementById('rightValue').textContent=fmt(rv);
+
+  const addEl=document.getElementById('addCost');
+  addEl.textContent=(adc>=0?'+':'')+fmt(adc);
+  addEl.style.color=col;
+
+  document.getElementById('movingInt').textContent=fmt(mi);
+
+  const tiEl=document.getElementById('totalInvest');
+  tiEl.textContent=fmt(ti);
+
+  const smEl=document.getElementById('safeMargin');
+  smEl.textContent=(sm>=0?'+':'')+sm.toFixed(1)+'%';
+  smEl.style.color=smCol;
+
+  document.getElementById('summaryText').innerHTML=
+    `<strong style="color:var(--gold)">${price}억</strong> 집 소유자가 `+
+    `<strong style="color:var(--gold)">${pyeong}평</strong> 신청 시, `+
+    `추가분담금 <strong style="color:${col}">${adc>=0?'+':''}${fmt(adc)}</strong>을 부담하며 `+
+    `총 투자비는 <strong style="color:var(--text)">${fmt(ti)}</strong>입니다. `+
+    `인근 신축 대비 <strong style="color:${smCol}">${sm>=0?'+':''}${sm.toFixed(1)}%</strong> 마진.`;
+}
+
+update();
+</script>
+</body>
+</html>

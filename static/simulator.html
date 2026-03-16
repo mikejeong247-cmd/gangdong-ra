@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>천호동 재개발 상세 시뮬레이터</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A0F1E;--navy2:#111827;--navy3:#141C2E;--navy4:#1E2D4A;
+  --gold:#C9A84C;--gold2:#E8C97A;--gold3:rgba(201,168,76,0.12);
+  --text:#F0E8D4;--text2:#8A9BBE;--text3:#4A6080;
+  --green:#4ADE80;--red:#F87171;--amber:#FBB040;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;}
+
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,15,30,0.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--navy4);
+  padding:0 40px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-home{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gold);font-size:14px;}
+.nav-home span{color:var(--text2);}
+
+/* HEADER */
+.sim-header{
+  background:linear-gradient(180deg,#0D1525,var(--navy));
+  border-bottom:1px solid var(--navy4);
+  padding:32px 40px 24px;text-align:center;position:relative;
+}
+.sim-header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);}
+.sim-tag{color:var(--gold);font-size:11px;letter-spacing:.25em;margin-bottom:8px;}
+.sim-header h1{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;margin-bottom:5px;}
+.sim-header p{color:var(--text2);font-size:13px;}
+
+/* STEPS */
+.steps-bar{display:flex;justify-content:center;gap:8px;margin-top:20px;}
+.step-tab{
+  background:transparent;color:var(--text2);border:1px solid var(--navy4);
+  border-radius:24px;padding:7px 16px;font-size:12px;cursor:pointer;
+  display:flex;align-items:center;gap:5px;transition:.15s;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.step-tab.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-color:var(--gold);font-weight:700;}
+.step-n{width:18px;height:18px;border-radius:50%;background:var(--navy4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.step-tab.on .step-n{background:rgba(0,0,0,.2);}
+
+.page{max-width:680px;margin:0 auto;padding:24px 16px 60px;}
+
+/* CARD */
+.card{background:var(--navy3);border:1px solid var(--navy4);border-radius:16px;padding:24px 20px;margin-bottom:14px;}
+.card-title{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.card-bar{width:4px;height:20px;background:linear-gradient(180deg,var(--gold),var(--gold2));border-radius:2px;}
+.card-title h2{color:var(--text);font-size:14px;font-weight:700;}
+.badge{background:var(--gold3);color:var(--gold);font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid var(--navy4);}
+
+/* SLIDERS */
+.sl-wrap{margin-bottom:18px;}
+.sl-row{display:flex;justify-content:space-between;margin-bottom:5px;}
+.sl-lbl{color:var(--text2);font-size:12px;}
+.sl-val{color:var(--gold);font-weight:700;font-size:13px;}
+.sl-hint{color:var(--text3);font-size:10px;margin-top:2px;}
+input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer;}
+
+/* MINI GRID */
+.mini3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.mini2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mini-c{background:#0D1525;border:1px solid var(--navy4);border-radius:9px;padding:11px 12px;}
+.mini-c .ml{color:var(--text2);font-size:10px;}
+.mini-c .mv{color:var(--text);font-size:14px;font-weight:700;margin-top:2px;}
+.mini-c .mv span{color:var(--text2);font-size:10px;margin-left:2px;}
+
+/* BIG INPUT */
+.big-inp{background:#0D1525;border:1px solid var(--gold);border-radius:10px;padding:11px 16px;color:var(--gold);font-size:24px;font-weight:800;width:140px;text-align:right;outline:none;}
+
+/* PYEONG */
+.py-wrap{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.py-btn{background:transparent;border:1px solid var(--navy4);border-radius:8px;color:var(--text2);padding:7px 14px;font-size:12px;cursor:pointer;transition:.15s;font-family:'Noto Sans KR',sans-serif;}
+.py-btn:hover{border-color:var(--gold);color:var(--gold);}
+.py-btn.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border-color:var(--gold);font-weight:700;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.kpi{background:var(--navy3);border:1px solid var(--navy4);border-radius:11px;padding:16px 12px;text-align:center;position:relative;overflow:hidden;}
+.kpi.hl{background:linear-gradient(135deg,#1A2540,#1E2D4A);border-color:var(--gold);}
+.kpi.hl::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.kpi .kl{color:var(--text2);font-size:11px;margin-bottom:5px;}
+.kpi .kv{font-size:19px;font-weight:800;color:var(--text);}
+.kpi.hl .kv{color:var(--gold);}
+.kpi .ks{color:var(--text3);font-size:10px;margin-top:4px;}
+
+/* SUMMARY */
+.sum-box{background:linear-gradient(135deg,#111825,#192035);border:1px solid var(--gold);border-radius:13px;padding:18px 20px;margin-bottom:14px;position:relative;overflow:hidden;}
+.sum-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));}
+.sum-tag{color:var(--gold);font-size:10px;letter-spacing:.15em;margin-bottom:7px;}
+.sum-text{color:var(--text);font-size:13px;line-height:1.75;}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{color:var(--gold);font-size:10px;font-weight:600;padding:7px 8px;border-bottom:1px solid var(--navy4);text-align:right;letter-spacing:.03em;}
+th:first-child{text-align:left;}
+td{padding:9px 8px;border-bottom:1px solid var(--navy4);text-align:right;color:var(--text);}
+td:first-child{text-align:left;}
+tr.sel td:first-child{color:var(--gold);font-weight:700;}
+tr.sel{background:rgba(201,168,76,0.07);cursor:pointer;}
+tr:not(.sel){cursor:pointer;}
+tr:hover{background:rgba(255,255,255,0.03);}
+
+/* FINANCE */
+.fin-row{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-radius:8px;border:1px solid var(--navy4);background:#0D1525;margin-bottom:8px;}
+.fin-row.hl{background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.3);}
+.fl{color:var(--text2);font-size:12px;}
+.fs{color:var(--text3);font-size:10px;margin-top:1px;}
+.fv{color:var(--text);font-size:14px;font-weight:700;}
+.fin-row.hl .fv{color:var(--gold);}
+
+/* COMP */
+.comp-c{background:#0D1525;border:1px solid var(--navy4);border-radius:9px;padding:11px 13px;margin-bottom:8px;}
+.comp-top{display:flex;justify-content:space-between;margin-bottom:6px;}
+.comp-name{color:var(--text);font-size:13px;font-weight:600;}
+.comp-sub{color:var(--text2);font-size:11px;margin-left:6px;}
+.comp-price{color:var(--gold);font-weight:700;font-size:14px;}
+.bar-bg{height:3px;background:var(--navy4);border-radius:2px;overflow:hidden;}
+.bar-fg{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;}
+
+/* BTNS */
+.btn-p{padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.btn-s{padding:12px 18px;background:transparent;color:var(--text2);border:1px solid var(--navy4);border-radius:11px;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:.2s;}
+.btn-s:hover{border-color:var(--gold);color:var(--gold);}
+
+.info-tip{background:#0A1020;border:1px solid var(--navy4);border-radius:8px;padding:9px 13px;margin-bottom:18px;font-size:11px;color:var(--text2);}
+.note{text-align:center;color:var(--text3);font-size:10px;margin-top:30px;padding:0 16px;line-height:1.7;}
+
+@media(max-width:480px){
+  nav{padding:0 16px;}
+  .sim-header{padding:24px 16px 18px;}
+  .mini3{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-home">← <span>홈으로</span></a>
+  <a href="calculator.html" style="color:var(--text2);font-size:13px;text-decoration:none;">간단 계산기</a>
+</nav>
+
+<div class="sim-header">
+  <div class="sim-tag">ADVANCED SIMULATOR · 조합원·투자자용</div>
+  <h1>천호1동 · 3동 재개발 시뮬레이터</h1>
+  <p>서울시 강동구 • 2025년 기준 추산</p>
+  <div class="steps-bar">
+    <button class="step-tab on" onclick="go(1)" id="tab1"><span class="step-n">1</span>내 집 시세</button>
+    <button class="step-tab" onclick="go(2)" id="tab2"><span class="step-n">2</span>사업 조건</button>
+    <button class="step-tab" onclick="go(3)" id="tab3"><span class="step-n">3</span>분석 결과</button>
+  </div>
+</div>
+
+<div class="page" id="page"></div>
+<div class="note">※ 참고용 추산이며 실제 사업성은 조합 및 전문가 확인이 필요합니다.</div>
+
+<script>
+// ── 상태 ──────────────────────────────────────────────────
+let ST={
+  step:1, myPrice:5, selPy:'34평',
+  cc:950, gsp:4800, msp:3800, far:280, pub:11, exp:25,
+  land:15000, mr:40, lr:4.5, cd:0, sd:0
+};
+
+const COMP=[
+  {name:'천호역 마에스트로',price:11.5,year:2020},
+  {name:'강동 센트럴 아이파크',price:13.2,year:2021},
+  {name:'길동 e편한세상',price:9.8,year:2018},
+  {name:'천호 더샵',price:12.4,year:2022}
+];
+const UNITS=[
+  {label:'25평',p:25},{label:'32평',p:32},{label:'34평',p:34},
+  {label:'40평',p:40},{label:'45평',p:45}
+];
+
+// ── 계산 ──────────────────────────────────────────────────
+function calc(){
+  const {myPrice,cc,gsp,msp,far,pub,exp,land,mr,lr,cd,sd}=ST;
+  const ap=myPrice*0.78;
+  const el=land*(1-pub/100);
+  const tf=el*(far/100);
+  const tu=Math.floor(tf/112);
+  const gu=Math.floor(tu*(1-mr/100));
+  const mc=Math.floor(land/50);
+  const tpa=mc*myPrice;
+  const ac=cc*(1+cd/100), ag=gsp*(1+sd/100);
+  const gi=(gu*112/3.3*ag)/10000;
+  const tc=(tf/3.3*ac)/10000;
+  const te=tc*(1+exp/100);
+  const pr=tpa>0?(gi-te)/tpa*100:0;
+  const rv=ap*(pr/100);
+  const ml=ap*0.6;
+  const mi=ml*(lr/100)*1.5;
+  const avgComp=COMP.reduce((s,c)=>s+c.price,0)/COMP.length;
+  const uc=UNITS.map(u=>{
+    const ump=(u.p*msp)/10000;
+    const adc=ump-rv;
+    const ti=myPrice+Math.max(0,adc)+mi;
+    const sm=(avgComp-ti)/ti*100;
+    return{...u,ump:ump.toFixed(2),adc:adc.toFixed(2),mi:mi.toFixed(2),ti:ti.toFixed(2),sm:sm.toFixed(1)};
+  });
+  const sel=uc.find(u=>u.label===ST.selPy)||uc[2];
+  return{ap:ap.toFixed(2),pr:pr.toFixed(1),rv:rv.toFixed(2),ml:ml.toFixed(2),mi:mi.toFixed(2),gi:gi.toFixed(1),te:te.toFixed(1),uc,sel};
+}
+
+// ── 헬퍼 ──────────────────────────────────────────────────
+function sc(v){return parseFloat(v)<2?'var(--green)':parseFloat(v)<5?'var(--gold)':'var(--red)';}
+function sl(label,val,min,max,step,unit,key,hint=''){
+  return`<div class="sl-wrap">
+    <div class="sl-row"><span class="sl-lbl">${label}</span><span class="sl-val" id="sv_${key}">${val.toLocaleString()} ${unit}</span></div>
+    <input type="range" min="${min}" max="${max}" step="${step}" value="${val}" oninput="set('${key}',+this.value)">
+    ${hint?`<div class="sl-hint" id="sh_${key}">${hint}</div>`:''}
+  </div>`;
+}
+
+function go(n){ST.step=n;render();}
+function set(k,v){ST[k]=v;render();}
+function setPy(l){ST.selPy=l;render();}
+
+// ── 렌더 ──────────────────────────────────────────────────
+function render(){
+  ['tab1','tab2','tab3'].forEach((t,i)=>{
+    document.getElementById(t).classList.toggle('on',i+1===ST.step);
+  });
+  const C=calc();
+  const pg=document.getElementById('page');
+
+  if(ST.step===1){
+    pg.innerHTML=`<div class="card">
+      <div class="card-title"><div class="card-bar"></div><h2>내 집 현재 시세 입력</h2><span class="badge">STEP 1</span></div>
+      <label class="sl-lbl" style="margin-bottom:8px;display:block">현재 시장가 (억원)</label>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <input class="big-inp" type="number" value="${ST.myPrice}" min="1" max="20" step="0.1" oninput="set('myPrice',+this.value)">
+        <span style="color:var(--text2);font-size:16px">억원</span>
+      </div>
+      <input type="range" min="1" max="20" step="0.5" value="${ST.myPrice}" oninput="set('myPrice',+this.value)" style="width:100%;accent-color:var(--gold);cursor:pointer;margin-bottom:3px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:22px"><span>1억</span><span>20억</span></div>
+      <div style="background:#0D1525;border:1px solid var(--navy4);border-radius:11px;padding:16px;margin-bottom:18px">
+        <div style="color:var(--text2);font-size:11px;margin-bottom:12px;letter-spacing:.1em">▸ 자동 역산</div>
+        <div class="mini2">
+          <div><div style="color:var(--text2);font-size:12px">감정평가액</div><div style="color:var(--gold);font-size:20px;font-weight:700;margin-top:3px">${C.ap}억</div><div style="color:var(--text3);font-size:10px;margin-top:1px">시세 × 78%</div></div>
+          <div><div style="color:var(--text2);font-size:12px">이주비 대출</div><div style="color:var(--text);font-size:20px;font-weight:700;margin-top:3px">${C.ml}억</div><div style="color:var(--text3);font-size:10px;margin-top:1px">감정액 × 60%</div></div>
+        </div>
+      </div>
+      <button class="btn-p" style="width:100%" onclick="go(2)">다음 → 사업 조건 설정</button>
+    </div>`;
+
+  } else if(ST.step===2){
+    pg.innerHTML=`<div class="card">
+      <div class="card-title"><div class="card-bar"></div><h2>사업 조건 설정</h2><span class="badge">STEP 2</span></div>
+      <div class="info-tip">💡 천호1·3동 기본값 세팅 — 슬라이더로 자유롭게 조정하세요</div>
+      <div class="mini3" style="margin-bottom:18px">
+        ${[['공사비',ST.cc,'만/평'],['일반분양가',ST.gsp,'만/평'],['조합원분양가',ST.msp,'만/평'],['용적률',ST.far,'%'],['기부채납',ST.pub,'%'],['제경비율',ST.exp,'%']].map(([l,v,u])=>`<div class="mini-c"><div class="ml">${l}</div><div class="mv">${v.toLocaleString()}<span>${u}</span></div></div>`).join('')}
+      </div>
+      ${sl('공사비 (만원/평)',ST.cc,700,1200,10,'만원/평','cc')}
+      ${sl('일반분양가 (만원/평)',ST.gsp,3000,7000,100,'만원/평','gsp')}
+      ${sl('조합원분양가 (만원/평)',ST.msp,2500,5500,100,'만원/평','msp')}
+      ${sl('용적률',ST.far,200,400,5,'%','far')}
+      ${sl('기부채납',ST.pub,5,20,1,'%','pub')}
+      ${sl('제경비율',ST.exp,15,40,1,'%','exp')}
+      ${sl('대지면적',ST.land,5000,50000,500,'m²','land','전체 정비구역 면적')}
+      ${sl('조합원물량비율',ST.mr,20,70,1,'%','mr')}
+      ${sl('이주비 대출금리',ST.lr,2,8,0.1,'%','lr')}
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <button class="btn-s" onclick="go(1)">← 이전</button>
+        <button class="btn-p" style="flex:1" onclick="go(3)">결과 분석 →</button>
+      </div>
+    </div>`;
+
+  } else {
+    const col=sc(C.sel.adc);
+    const smCol=parseFloat(C.sel.sm)>0?'var(--green)':'var(--red)';
+    pg.innerHTML=`
+    <div class="sum-box">
+      <div class="sum-tag">◆ AI 한 줄 요약</div>
+      <div class="sum-text">
+        <strong style="color:var(--gold)">${ST.myPrice}억</strong> 소유자가
+        <strong style="color:var(--gold)">${ST.selPy}</strong> 입주 시,
+        비례율 <strong style="color:${col}">${C.pr}%</strong> ·
+        추가분담금 <strong style="color:${col}">${parseFloat(C.sel.adc)>=0?'+':''}${C.sel.adc}억</strong> ·
+        안전마진 <strong style="color:${smCol}">${C.sel.sm}%</strong>
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="color:var(--text2);font-size:11px;margin-bottom:8px">희망 평형 선택</div>
+      <div class="py-wrap">${UNITS.map(u=>`<button class="py-btn${u.label===ST.selPy?' on':''}" onclick="setPy('${u.label}')">${u.label}</button>`).join('')}</div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi hl"><div class="kl">추가분담금</div><div class="kv" style="color:${col}">${parseFloat(C.sel.adc)>=0?'+':''}${C.sel.adc}억</div><div class="ks">조합원분양가 − 권리가액</div></div>
+      <div class="kpi"><div class="kl">비례율</div><div class="kv">${C.pr}%</div><div class="ks">수입 ${C.gi}억 / 지출 ${C.te}억</div></div>
+      <div class="kpi"><div class="kl">안전마진</div><div class="kv" style="color:${smCol}">${C.sel.sm}%</div><div class="ks">총투자비 대비 시세</div></div>
+      <div class="kpi"><div class="kl">총투자비</div><div class="kv">${C.sel.ti}억</div><div class="ks">현집값+분담금+이자</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-bar"></div><h2>평형별 수익성 비교</h2><span class="badge">UNIT ANALYSIS</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>평형</th><th>조합원분양가</th><th>추가분담금</th><th>이주비이자</th><th>총투자비</th><th>안전마진</th></tr></thead>
+          <tbody>${C.uc.map(u=>{const c=sc(u.adc);return`<tr class="${u.label===ST.selPy?'sel':''}" onclick="setPy('${u.label}')">
+            <td>${u.label===ST.selPy?'▶ ':''} ${u.label}</td>
+            <td>${u.ump}억</td>
+            <td style="color:${c};font-weight:700">${parseFloat(u.adc)>=0?'+':''}${u.adc}억</td>
+            <td>${u.mi}억</td>
+            <td>${u.ti}억</td>
+            <td style="color:${parseFloat(u.sm)>0?'var(--green)':'var(--red)'};font-weight:700">${u.sm}%</td>
+          </tr>`;}).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-bar"></div><h2>민감도 분석</h2><span class="badge">SENSITIVITY</span></div>
+      ${sl('공사비 변동',ST.cd,-20,30,1,'%','cd',`${ST.cc}만 → ${(ST.cc*(1+ST.cd/100)).toFixed(0)}만원/평`)}
+      ${sl('일반분양가 변동',ST.sd,-20,30,1,'%','sd',`${ST.gsp}만 → ${(ST.gsp*(1+ST.sd/100)).toFixed(0)}만원/평`)}
+      <div style="background:#0D1525;border:1px solid var(--navy4);border-radius:9px;padding:13px 15px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          ${[['비례율',`${C.pr}%`],['추가분담금',`${parseFloat(C.sel.adc)>=0?'+':''}${C.sel.adc}억`],['총투자비',`${C.sel.ti}억`]].map(([l,v])=>`<div style="text-align:center"><div style="color:var(--text2);font-size:10px">${l}</div><div style="color:var(--gold);font-size:14px;font-weight:700;margin-top:3px">${v}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-bar"></div><h2>금융비용 · 이자 상세</h2><span class="badge">FINANCE</span></div>
+      ${[
+        ['감정평가액',`${C.ap}억`,'시세 × 78%',false],
+        ['이주비 대출원금',`${C.ml}억`,'감정액 × 60%',false],
+        [`대출금리`,`${ST.lr}%`,'연간',false],
+        ['이주기간 이자 (1.5년)',`${C.mi}억`,'원금 × 금리 × 1.5',true],
+        ['총투자비 합계',`${C.sel.ti}억`,'현집값+추가분담금+이자',true]
+      ].map(([l,v,s,h])=>`<div class="fin-row${h?' hl':''}"><div><div class="fl">${l}</div><div class="fs">${s}</div></div><div class="fv">${v}</div></div>`).join('')}
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="card-bar"></div><h2>인근 단지 시세 비교 (34평)</h2><span class="badge">MARKET COMP</span></div>
+      ${COMP.map(c=>`<div class="comp-c">
+        <div class="comp-top">
+          <div><span class="comp-name">${c.name}</span><span class="comp-sub">${c.year}년 준공</span></div>
+          <span class="comp-price">${c.price}억</span>
+        </div>
+        <div class="bar-bg"><div class="bar-fg" style="width:${Math.min(c.price/15*100,100)}%"></div></div>
+      </div>`).join('')}
+      <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.3);border-radius:9px;padding:13px 14px;margin-top:6px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="color:var(--text2);font-size:11px">내 총투자비 (${ST.selPy})</div><div style="color:var(--gold);font-size:18px;font-weight:700">${C.sel.ti}억</div></div>
+        <div style="text-align:right"><div style="color:var(--text2);font-size:11px">인근 평균 대비</div><div style="color:${smCol};font-size:15px;font-weight:700">${parseFloat(C.sel.sm)>0?'✓ ':'✗ '}${C.sel.sm}% 마진</div></div>
+      </div>
+    </div>
+
+    <button class="btn-s" style="width:100%;margin-top:4px" onclick="go(1)">← 처음으로 돌아가기</button>`;
+  }
+}
+
+render();
+</script>
+</body>
+</html>
