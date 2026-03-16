@@ -165,7 +165,38 @@ tr:hover{background:rgba(255,255,255,.02);cursor:pointer;}
 .wt{color:var(--red);font-size:12px;font-weight:700;margin-bottom:3px;}
 .wd{color:var(--text2);font-size:11px;line-height:1.6;}
 .note{text-align:center;color:var(--text3);font-size:10px;margin-top:24px;padding:0 14px;line-height:1.7;}
-@media(max-width:480px){.g3{grid-template-columns:1fr 1fr;}.saf-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:768px){
+  .hdr{padding:22px 14px 16px;}
+  .hdr h1{font-size:17px;}
+  .hdr p{font-size:11px;}
+  .legend{gap:10px;}
+  .leg{font-size:10px;}
+  .tabs{gap:6px;}
+  .tab{padding:5px 10px;font-size:11px;}
+  .page{max-width:100%;padding:16px 12px 60px;}
+  .zone{padding:16px 14px;}
+  .zone-title{font-size:13px;}
+  .card{padding:16px 14px;}
+  .big-inp{font-size:20px;width:120px;}
+  .saf-grid{grid-template-columns:repeat(5,1fr);}
+  .kpi-g{grid-template-columns:1fr 1fr;}
+  .kpi .kv{font-size:15px;}
+  .stxt{font-size:12px;}
+  .g3{grid-template-columns:1fr 1fr;}
+  table{font-size:11px;}
+  th,td{padding:6px 4px;}
+  .nav-links{display:none;}
+}
+@media(max-width:480px){
+  .saf-grid{grid-template-columns:repeat(3,1fr);}
+  .g3{grid-template-columns:1fr 1fr;}
+  .tabs{gap:4px;}
+  .tab{padding:5px 7px;font-size:10px;}
+  .tab-n{width:14px;height:14px;font-size:9px;}
+  .py-wrap{gap:5px;}
+  .py-btn{padding:5px 10px;font-size:11px;}
+  .zone-desc{display:none;}
+}
 </style>
 </head>
 <body>
